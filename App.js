@@ -13,7 +13,6 @@ export default function App() {
   const fetchGifs = async () => {
     const res = await giphy.search(query, { limit: 5 });
     setResults(res.data);
-    console.log(results);
   };
 
   useEffect(() => {
@@ -28,9 +27,21 @@ export default function App() {
         placeholder="Search GIPHY"
         onChange={(e) => setQuery(e.target.value)}
       />
-      <Text>{query}</Text>
-
       <ScrollView>{}</ScrollView>
+
+      {results
+        ? results.map((item) => {
+            console.log(item.embed_url);
+            return (
+              <img
+                key={item.id}
+                src={item.images.fixed_height_downsampled.url}
+                width={200}
+                height={200}
+              />
+            );
+          })
+        : null}
 
       <StatusBar style="auto" />
     </View>
