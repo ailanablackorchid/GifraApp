@@ -5,8 +5,14 @@ import {
   Text,
   TextInput,
   View,
+  SafeAreaView,
   ScrollView,
   FlatList,
+  Image,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 
@@ -25,26 +31,20 @@ export default function App() {
   };
 
   useEffect(() => {
-    // try {
-    //   setIsLoading(true);
-    //   setTimeout(() => {
-    //   fetchGifs();
-    // }, 1000);
-    // setIsLoading(false);
-    fetchGifs();
-    // } catch (e) {
-    //   console.log(e.message);
-    // } finally {
-    // }
+    try {
+      fetchGifs();
+    } catch (e) {
+      console.log(e);
+    }
   }, [query]);
 
   const renderItem = ({ item }) => (
-    <img
-      key={item.id}
-      src={item.images.fixed_height_downsampled.url}
-      width={200}
-      height={200}
+    // <View>
+    <Image
+      source={{ uri: item.images.fixed_height_downsampled.url }}
+      style={{ height: 100, width: 100 }}
     />
+    // <Text>item.images.fixed_height_downsampled.url</Text>
   );
 
   const onRefresh = () => {
@@ -54,21 +54,29 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    // <KeyboardAvoidingView
+    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+    //   style={styles.container}
+    // >
+    //   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <SafeAreaView style={styles.container}>
       <TextInput
         value={query}
         style={styles.input}
         placeholder="Search GIPHY"
-        onChange={(e) => setQuery(e.target.value)}
+        onChangeText={(text) => setQuery(text)}
       />
       <FlatList
+        numColumns={2}
         data={results}
-        renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        renderItem={renderItem}
         refreshing={isRefreshing}
         onRefresh={onRefresh}
       />
-    </View>
+    </SafeAreaView>
+    //   {/* </TouchableWithoutFeedback> */}
+    // {/* </KeyboardAvoidingView> */}
   );
 }
 
@@ -81,8 +89,6 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    padding: "5px 15px",
-    margin: "5px 0",
     borderRadius: 3,
     borderWidth: 1,
   },
