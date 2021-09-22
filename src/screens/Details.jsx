@@ -9,15 +9,17 @@ import {
   FlatList,
   Image,
   Dimensions,
-  ScrollView,
+  TouchableHighlight,
 } from "react-native";
+
+const TOKEN = "1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2";
 
 const Details = ({ route, navigation }) => {
   const [relatedResults, setRelatedResults] = useState([]);
 
   const { item } = route.params;
-  const giphy = new GiphyFetch("1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2");
-
+  const giphy = new GiphyFetch(TOKEN);
+  console.log(item.images.fixed_height_downsampled.url);
   const fetchRelatedGifs = async (id) => {
     const results = await giphy.related(id);
     setRelatedResults(results.data);
@@ -38,13 +40,21 @@ const Details = ({ route, navigation }) => {
     return (
       <View>
         <View>
-          <Button title={"back"} onPress={() => navigation.goBack()} />
+          <TouchableHighlight
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
+            <Image source={require("../img/icons/button-icon.png")} />
+          </TouchableHighlight>
           <Image
             source={{ uri: item.images.fixed_height_downsampled.url }}
             style={styles.imageBig}
           />
           <View style={styles.viewInfo}>
-            {/* <Image /> */}
+            <Image
+              source={require("../img/icons/eye-icon.png")}
+              style={styles.viewIcon}
+            />
             <Text style={styles.viewText}>no information</Text>
           </View>
         </View>
@@ -52,7 +62,10 @@ const Details = ({ route, navigation }) => {
           {item?.profile_url ? (
             <Image source={{ uri: item.profile_url }} style={styles.userpic} />
           ) : (
-            <View style={styles.userpic}></View>
+            <Image
+              source={{ uri: item.images.fixed_height_downsampled.url }}
+              style={styles.userpic}
+            />
           )}
           <View style={styles.userText}>
             <Text style={styles.username}>
@@ -102,6 +115,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#333435",
     margin: 8,
+  },
+  backButton: {
+    position: "absolute",
+    zIndex: 2,
+    margin: 16,
   },
   imageBig: {
     borderRadius: 24,
@@ -157,6 +175,11 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderRadius: 24,
     alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  viewIcon: {
+    marginRight: 8,
   },
   viewText: {
     fontSize: 16,
