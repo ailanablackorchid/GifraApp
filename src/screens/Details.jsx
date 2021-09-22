@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { ScreenContainer } from "react-native-screens";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import {
   StyleSheet,
@@ -29,17 +28,16 @@ const Details = ({ route, navigation }) => {
   const renderRelatedItem = ({ item }) => (
     <Image
       source={{ uri: item.images.fixed_height_downsampled.url }}
-      //   style={{ height: 100, width: 100 }}
+        style={{ height: 100, width: 100 }}
     />
   );
 
   return (
-    <ScreenContainer>
-      <View>
+      <SafeAreaView>
         <Button title={"back"} onPress={() => navigation.goBack()} />
         <Image
           source={{ uri: item.images.fixed_height_downsampled.url }}
-          //   style={{ height: 100, width: 100 }}
+            style={{ height: 100, width: 100 }}
         />
         <Text>{item?.username}</Text>
         <FlatList
@@ -48,8 +46,7 @@ const Details = ({ route, navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={(item) => renderRelatedItem(item)}
         />
-      </View>
-    </ScreenContainer>
+      </SafeAreaView>
   );
 };
 

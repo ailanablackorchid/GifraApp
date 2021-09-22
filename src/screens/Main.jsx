@@ -9,7 +9,6 @@ import {
   TouchableHighlight,
   Text,
 } from "react-native";
-import { ScreenContainer } from "react-native-screens";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 
 const Main = ({ navigation }) => {
@@ -31,16 +30,16 @@ const Main = ({ navigation }) => {
     setIsRefreshing(false);
   };
 
-  //   useEffect(() => {
-  //     try {
-  //       fetchGifs();
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //     // return () => {
-  //     //   setResults([]);
-  //     // };
-  //   }, [query]);
+    useEffect(() => {
+      try {
+        fetchGifs();
+      } catch (e) {
+        console.log(e);
+      }
+      return () => {
+        setResults([]);
+      };
+    }, [query]);
 
   const renderItem = ({ item }, navigation) => (
     <TouchableHighlight
@@ -54,25 +53,23 @@ const Main = ({ navigation }) => {
   );
 
   return (
-    <ScreenContainer>
-      {/* <SafeAreaView> */}
-      {/* <TextInput
-        value={query}
-        //   style={styles.input}
-        placeholder="Search GIPHY"
-        onChangeText={(text) => setQuery(text)}
-      /> */}
-      {/* 
-      <FlatList
-        numColumns={2}
-        data={results}
-        keyExtractor={(item) => item.id}
-        renderItem={(item) => renderItem(item, navigation)}
-        refreshing={isRefreshing}
-        onRefresh={onRefresh}
-      /> */}
-      {/* </SafeAreaView> */}
-    </ScreenContainer>
+      <SafeAreaView>
+        <TextInput
+          value={query}
+            style={styles.input}
+          placeholder="Search GIPHY"
+          onChangeText={(text) => setQuery(text)}
+        />
+        
+        <FlatList
+          numColumns={2}
+          data={results}
+          keyExtractor={(item) => item.id}
+          renderItem={(item) => renderItem(item, navigation)}
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+        />
+      </SafeAreaView>
   );
 };
 
