@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
   TextInput,
   SafeAreaView,
   View,
   FlatList,
   Image,
   TouchableHighlight,
-  Text,
+  RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import { GiphyFetch } from "@giphy/js-fetch-api";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import styles from "../styles/Main.js";
+
+const TOKEN = "1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2";
+const LOADER_URL =
+  "https://media4.giphy.com/media/3oEjI6SIIHBdRxXI40/200_d.gif?cid=e0f3315ccwui7kfbjef9awo2ilieqy2i6a4q5zqtuvd4eb5s&rid=200_d.gif&ct=g";
 
 const Main = ({ navigation }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [offset, setOffset] = useState(50);
 
-  const giphy = new GiphyFetch("1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2");
+  const giphy = new GiphyFetch(TOKEN);
+  const { promiseInProgress } = usePromiseTracker();
 
   const fetchGifs = async () => {
     const res = await giphy.search(query);
@@ -25,66 +32,102 @@ const Main = ({ navigation }) => {
   };
 
   const onRefresh = () => {
+    setResults([]);
     setIsRefreshing(true);
     fetchGifs();
     setIsRefreshing(false);
+    setOffset(50);
   };
 
-    useEffect(() => {
-      try {
-        fetchGifs();
-      } catch (e) {
-        console.log(e);
-      }
-      return () => {
-        setResults([]);
-      };
-    }, [query]);
+  useEffect(() => {
+    try {
+      trackPromise(fetchGifs());
+    } catch (e) {
+      console.log(e);
+    }
+    return () => {
+      setResults([]);
+    };
+  }, [query]);
 
-  const renderItem = ({ item }, navigation) => (
-    <TouchableHighlight
-      onPress={() => navigation.push("Details", { item: item })}
-    >
+  const renderItem = ({ item }, navigation) => {
+    return (
+      <TouchableHighlight
+        onPress={() => navigation.push("Details", { item: item })}
+      >
+        <Image
+          source={{ uri: item.images.fixed_height_downsampled.url }}
+          style={styles.image}
+        />
+      </TouchableHighlight>
+    );
+  };
+
+  const onEndReached = async () => {
+    const res = await giphy.search(query, { offset: offset });
+    setOffset(offset + 50);
+    setResults([...results, ...res.data]);
+  };
+
+  const ClearInputButton = () => (
+    <TouchableOpacity style={styles.clearInput} onPress={() => setQuery("")}>
       <Image
-        source={{ uri: item.images.fixed_height_downsampled.url }}
-        style={{ height: 100, width: 100 }}
+        style={styles.clearIcon}
+        source={require("../img/icons/x-circle-icon.png")}
       />
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
+
+  const LoadingIndicator = () =>
+    promiseInProgress && (
+      <Image
+        source={{
+          uri: LOADER_URL,
+        }}
+        style={styles.loaderGIF}
+      />
+    );
 
   return (
-      <SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inputContainer}>
+        <Image
+          source={require("../img/icons/search-icon.png")}
+          style={styles.inputIcon}
+        />
         <TextInput
           value={query}
-            style={styles.input}
+          style={styles.input}
           placeholder="Search GIPHY"
+          placeholderTextColor="#989a9a"
+          keyboardAppearance="dark"
           onChangeText={(text) => setQuery(text)}
         />
-        
-        <FlatList
-          numColumns={2}
-          data={results}
-          keyExtractor={(item) => item.id}
-          renderItem={(item) => renderItem(item, navigation)}
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-        />
-      </SafeAreaView>
+        {query.length ? <ClearInputButton /> : null}
+      </View>
+      <LoadingIndicator />
+      <FlatList
+        numColumns={2}
+        data={results}
+        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderItem(item, navigation)}
+        onEndReached={onEndReached}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            title="Pull to refresh"
+            tintColor="#fff"
+            titleColor="#fff"
+          />
+        }
+        contentContainerStyle={{
+          alignSelf: "center",
+          alignContent: "center",
+        }}
+      />
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  input: {
-    borderRadius: 3,
-    borderWidth: 1,
-  },
-});
 
 export default Main;

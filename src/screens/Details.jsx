@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import {
-  StyleSheet,
   Text,
-  Button,
   View,
   SafeAreaView,
   FlatList,
   Image,
+  TouchableHighlight,
 } from "react-native";
+import styles from "../styles/Details.js";
+
+const TOKEN = "1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2";
 
 const Details = ({ route, navigation }) => {
   const [relatedResults, setRelatedResults] = useState([]);
 
   const { item } = route.params;
-  const giphy = new GiphyFetch("1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2");
+  const giphy = new GiphyFetch(TOKEN);
 
   const fetchRelatedGifs = async (id) => {
     const results = await giphy.related(id);
@@ -28,40 +30,68 @@ const Details = ({ route, navigation }) => {
   const renderRelatedItem = ({ item }) => (
     <Image
       source={{ uri: item.images.fixed_height_downsampled.url }}
-        style={{ height: 100, width: 100 }}
+      style={styles.image}
     />
   );
 
-  return (
-      <SafeAreaView>
-        <Button title={"back"} onPress={() => navigation.goBack()} />
+  const listHeaderComponent = () => (
+    <View>
+      <View>
+        <TouchableHighlight
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Image source={require("../img/icons/button-icon.png")} />
+        </TouchableHighlight>
         <Image
           source={{ uri: item.images.fixed_height_downsampled.url }}
-            style={{ height: 100, width: 100 }}
+          style={styles.imageBig}
         />
-        <Text>{item?.username}</Text>
-        <FlatList
-          numColumns={2}
-          data={relatedResults}
-          keyExtractor={(item) => item.id}
-          renderItem={(item) => renderRelatedItem(item)}
-        />
-      </SafeAreaView>
+        <View style={styles.viewInfo}>
+          <Image
+            source={require("../img/icons/eye-icon.png")}
+            style={styles.viewIcon}
+          />
+          <Text style={styles.viewText}>no information</Text>
+        </View>
+      </View>
+      <View style={styles.userInfo}>
+        {item?.profile_url ? (
+          <Image source={{ uri: item.profile_url }} style={styles.userpic} />
+        ) : (
+          <Image
+            source={{ uri: item.images.fixed_height_downsampled.url }}
+            style={styles.userpic}
+          />
+        )}
+        <View style={styles.userText}>
+          <Text style={styles.username}>
+            {item?.username ? item.username : "Unknown"}
+          </Text>
+          <Text style={styles.userid}>
+            {item?.display_name ? item.display_name : "@unknown"}
+          </Text>
+        </View>
+      </View>
+      <Text style={styles.relatedText}>Related GIFs</Text>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        ListHeaderComponent={listHeaderComponent}
+        numColumns={2}
+        data={relatedResults}
+        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderRelatedItem(item)}
+        contentContainerStyle={{
+          alignSelf: "center",
+          alignContent: "center",
+        }}
+      />
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  input: {
-    borderRadius: 3,
-    borderWidth: 1,
-  },
-});
 
 export default Details;
