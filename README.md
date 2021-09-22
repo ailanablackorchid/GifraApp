@@ -4,8 +4,14 @@ This is React Native app (with Expo) uses GIPHY API and shows gifs and informati
 
 ## How to start applicaton:
 
+### Option 1:
+
+1. **Download Expo Go app on your smartphone**
+2. **Go to the [link](exp://exp.host/@ailana.askar/GifraApp) can QR code with a camera, Expo Go will ask you to open the project**
+
+
 1. **Copy this repository with `git clone https://github.com/ailanablackorchid/GifraApp` and run `npm install` in this folder**
-2. **Run `npm start` in this folder**
+2. **Run `npm start` in this folder, the MetroBuilder should start in your browser**
 3. **Download Expo Go app on your smartphone**
 4. **Scan QR code with a camera, Expo Go will ask you to open the project**
 
