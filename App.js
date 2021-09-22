@@ -11,19 +11,18 @@ export default function App() {
   console.log(StackGIPHY);
 
   return (
-    <Main />
-    // <NavigationContainer>
-    //   <StackGIPHY.Navigator
-    //     screenOptions={{
-    //       headerShown: false,
-    //     }}
-    //   >
-    //     <StackGIPHY.Screen name="Main" component={Main}></StackGIPHY.Screen>
-    //     {/* <StackGIPHY.Screen
-    //       name="Details"
-    //       component={Details}
-    //     ></StackGIPHY.Screen> */}
-    //   </StackGIPHY.Navigator>
-    // </NavigationContainer>
+    <NavigationContainer>
+      <StackGIPHY.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <StackGIPHY.Screen name="Main" component={Main}></StackGIPHY.Screen>
+        <StackGIPHY.Screen
+          name="Details"
+          component={Details}
+        ></StackGIPHY.Screen>
+      </StackGIPHY.Navigator>
+    </NavigationContainer>
   );
 }
