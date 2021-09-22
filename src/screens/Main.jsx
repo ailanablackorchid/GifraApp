@@ -8,6 +8,8 @@ import {
   Image,
   TouchableHighlight,
   Text,
+  RefreshControl,
+  Dimensions,
 } from "react-native";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 
@@ -16,6 +18,7 @@ const Main = ({ navigation }) => {
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [offset, setOffset] = useState(50);
 
   const giphy = new GiphyFetch("1MgWwcx6vB72YYFMZw0zSTscgiW7fLk2");
 
@@ -25,65 +28,116 @@ const Main = ({ navigation }) => {
   };
 
   const onRefresh = () => {
+    setResults([]);
     setIsRefreshing(true);
     fetchGifs();
     setIsRefreshing(false);
   };
 
-    useEffect(() => {
-      try {
-        fetchGifs();
-      } catch (e) {
-        console.log(e);
-      }
-      return () => {
-        setResults([]);
-      };
-    }, [query]);
+  useEffect(() => {
+    try {
+      // setIsLoading(true);
+      fetchGifs();
+      // setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+    return () => {
+      setResults([]);
+    };
+  }, [query]);
 
-  const renderItem = ({ item }, navigation) => (
-    <TouchableHighlight
-      onPress={() => navigation.push("Details", { item: item })}
-    >
-      <Image
-        source={{ uri: item.images.fixed_height_downsampled.url }}
-        style={{ height: 100, width: 100 }}
-      />
-    </TouchableHighlight>
-  );
+  const renderItem = ({ item }, navigation) => {
+    setIsLoading(false);
+    return (
+      <TouchableHighlight
+        onPress={() => navigation.push("Details", { item: item })}
+      >
+        <Image
+          source={{ uri: item.images.fixed_height_downsampled.url }}
+          style={styles.image}
+        />
+      </TouchableHighlight>
+    );
+  };
+
+  const onEndReached = async () => {
+    const res = await giphy.search(query, { offset: offset });
+    setOffset(offset + 50);
+    setResults([...results, ...res.data]);
+  };
+
+  const handleOnChangeText = (text) => {
+    setQuery(text);
+    setIsLoading(true);
+  };
 
   return (
-      <SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inputContainer}>
         <TextInput
           value={query}
-            style={styles.input}
+          style={styles.input}
           placeholder="Search GIPHY"
-          onChangeText={(text) => setQuery(text)}
+          placeholderTextColor="#989a9a"
+          keyboardAppearance="dark"
+          onChangeText={(text) => {
+            handleOnChangeText(text);
+          }}
         />
-        
-        <FlatList
-          numColumns={2}
-          data={results}
-          keyExtractor={(item) => item.id}
-          renderItem={(item) => renderItem(item, navigation)}
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-        />
-      </SafeAreaView>
+      </View>
+      {isLoading ? <Text>loading</Text> : null}
+      <FlatList
+        numColumns={2}
+        data={results}
+        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderItem(item, navigation)}
+        onEndReached={onEndReached}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            title="Pull to refresh"
+            tintColor="#fff"
+            titleColor="#fff"
+          />
+        }
+        contentContainerStyle={{
+          alignSelf: "center",
+          alignContent: "center",
+        }}
+      />
+    </SafeAreaView>
   );
 };
 
+const sizeImage = Dimensions.get("window").width / 2 - 16;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    padding: 8,
+    backgroundColor: "#000",
     justifyContent: "center",
   },
-
   input: {
-    borderRadius: 3,
+    backgroundColor: "#17181A",
+    color: "#ffffff",
+    padding: 16,
+    borderRadius: 16,
     borderWidth: 1,
+    borderColor: "#333435",
+    margin: 8,
+  },
+  image: {
+    borderRadius: 8,
+    height: sizeImage,
+    width: sizeImage,
+    margin: 4,
+  },
+  flatList: {
+    justifyContent: "center",
+    alignSelf: "center",
+    alignContent: "center",
   },
 });
 
