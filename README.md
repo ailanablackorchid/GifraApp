@@ -7,7 +7,7 @@ This is React Native app (with Expo) uses GIPHY API and shows gifs and informati
 ### Option 1:
 
 1. **Download Expo Go app on your smartphone**
-2. **Go to the exp://exp.host/@ailana.askar/GifraApp and scan QR code with a camera, Expo Go will ask you to open the project**
+2. **Go to the *https://expo.dev/@ailana.askar/GifraApp*  and scan QR code with a camera, Expo Go will ask you to open the project**
 
 ### Option 2:
 
