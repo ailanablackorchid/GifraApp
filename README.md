@@ -11,9 +11,9 @@ This is React Native app (with Expo) uses GIPHY API and shows gifs and informati
 
 
 
-##Screenshots
+## Screenshots
 
-[!home](https://ibb.co/fQZvRyJ)
-[!search results](https://ibb.co/wKpk3p0)
-[!details](https://ibb.co/ynXZ8xb)
-[!no results](https://ibb.co/3FWGy6b)
+![home](https://ibb.co/fQZvRyJ)
+![search results](https://ibb.co/wKpk3p0)
+![details](https://ibb.co/ynXZ8xb)
+![no results](https://ibb.co/3FWGy6b)
