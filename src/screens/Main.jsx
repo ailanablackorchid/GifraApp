@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
   RefreshControl,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
@@ -106,6 +107,11 @@ const Main = ({ navigation }) => {
         {query.length ? <ClearInputButton /> : null}
       </View>
       <LoadingIndicator />
+      {results.length ? null : (
+        <Text style={styles.noMatch}>
+          No results for <Text style={{ fontWeight: "bold" }}>{query}</Text>
+        </Text>
+      )}
       <FlatList
         numColumns={2}
         data={results}
