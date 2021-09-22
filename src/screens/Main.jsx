@@ -107,11 +107,11 @@ const Main = ({ navigation }) => {
         {query.length ? <ClearInputButton /> : null}
       </View>
       <LoadingIndicator />
-      {results.length ? null : (
+      {+!!query.length ^ +!!results.length ? (
         <Text style={styles.noMatch}>
           No results for <Text style={{ fontWeight: "bold" }}>{query}</Text>
         </Text>
-      )}
+      ) : null}
       <FlatList
         numColumns={2}
         data={results}

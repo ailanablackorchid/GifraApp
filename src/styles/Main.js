@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-around",
     backgroundColor: "#17181A",
     paddingLeft: 16,
     borderRadius: 16,
@@ -20,15 +21,19 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   input: {
+    flex: 1,
     color: "#ffffff",
     alignItems: "stretch",
     padding: 16,
     paddingLeft: 0,
-    width: "85%",
     fontSize: 17,
+    alignSelf: "stretch",
   },
   inputIcon: {
     padding: 8,
+    marginRight: 8,
+  },
+  clearIcon: {
     marginRight: 8,
   },
   loaderGIF: {

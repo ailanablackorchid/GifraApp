@@ -28,6 +28,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "This is React Native app (with Expo) uses GIPHY API and shows gifs and information about them.\n",
+    "githubUrl": "https://github.com/ailanablackorchid/GifraApp"
   }
 }
